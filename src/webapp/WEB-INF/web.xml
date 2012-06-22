@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
-     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" version="2.4">
 
   <display-name>HelloWorldPortlet</display-name>
   <description>HelloWorldPortlet Portlet</description>
@@ -20,10 +20,6 @@
     <listener-class>org.exoplatform.services.portletcontainer.impl.servlet.PortletApplicationListener</listener-class>
   </listener>
 
-  <listener>
-    <listener-class>vyre.publishing.portal.PortletApplicationListener</listener-class>
-  </listener>
-
   <servlet>
     <servlet-name>PortletWrapper</servlet-name>
     <servlet-class>org.exoplatform.services.portletcontainer.impl.servlet.ServletWrapper</servlet-class>
@@ -35,15 +31,15 @@
   </servlet-mapping>
 
 
-	<servlet>
-		<servlet-name>view-servlet</servlet-name>
-		<servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
+  <servlet>
+    <servlet-name>view-servlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.ViewRendererServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 
-	<servlet-mapping>
-		<servlet-name>view-servlet</servlet-name>
-		<url-pattern>/WEB-INF/servlet/view</url-pattern>
-	</servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>view-servlet</servlet-name>
+    <url-pattern>/WEB-INF/servlet/view</url-pattern>
+  </servlet-mapping>
 
 </web-app>
