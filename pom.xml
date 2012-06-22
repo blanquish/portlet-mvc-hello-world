@@ -3,155 +3,243 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>portlet-mvc-refactor-test</groupId>
-    <artifactId>portlet-mvc-refactor-test</artifactId>
+  <modelVersion>4.0.0</modelVersion>
 
-  <version>1.0</version>
+  <groupId>portlet-mvc-refactor-test</groupId>
+  <artifactId>portlet-mvc-refactor-test</artifactId>
+  <version>0.1-alpha1</version>
+  <name>portlet-mvc-refactor-test</name>
+  <!--<packaging>jar</packaging>-->
+
+
+  <!-- Library versions being used -->
+  <properties>
+    <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+    <portlet-api.version>1.0</portlet-api.version>
+    <servlet-api.version>2.4</servlet-api.version>
+    <jsp-api.version>2.0</jsp-api.version>
+    <junit.version>3.8.1</junit.version>
+  </properties>
 
   <build>
-    <sourceDirectory>${project.basedir}/src</sourceDirectory>
-    <outputDirectory>${project.basedir}/target/classes</outputDirectory>
+    <sourceDirectory>${basedir}/src/java</sourceDirectory>
+    <testSourceDirectory>${basedir}/src/test</testSourceDirectory>
     <resources>
       <resource>
-        <targetPath>content</targetPath>
-        <directory>WEB-INF</directory>
+        <directory>${basedir}/src/java</directory>
         <includes>
-          <include>Language-ext.properties</include>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>${basedir}/src/resources</directory>
+        <includes>
+          <include>**/*.*</include>
         </includes>
       </resource>
     </resources>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.0.2</version>
-          <configuration>
-            <source>1.5</source>
-            <target>1.5</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>2.1-alpha-2</version>
-          <configuration>
-            <webResources>
-              <resource>
-                <directory>css</directory>
-                <targetPath>css</targetPath>
-              </resource>
-              <resource>
-                <directory>js</directory>
-                <targetPath>js</targetPath>
-              </resource>
-              <resource>
-                <directory>images</directory>
-                <targetPath>images</targetPath>
-              </resource>
-              <resource>
-                <directory>WEB-INF/jsp/</directory>
-                <targetPath>WEB-INF/jsp</targetPath>
-              </resource>
-              <resource>
-                <directory>WEB-INF</directory>
-                <targetPath>WEB-INF</targetPath>
-                <includes>
-                  <include>**/*.xml</include>
-                </includes>
-                <excludes>
-                  <exclude>Language-ext.properties</exclude>
-                </excludes>
-              </resource>
-            </webResources>
-            <webXml>${project.basedir}/WEB-INF/web.xml</webXml>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+    <testResources>
+      <testResource>
+        <directory>${basedir}/test-conf</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </testResource>
+    </testResources>
 
-  <properties>
-    <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-  </properties>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!--<version>2.0.2</version>-->
+        <configuration>
+          <optimize>true</optimize>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <!--version>RELEASE</version-->
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!--<plugin>-->
+        <!--<groupId>org.apache.maven.plugins</groupId>-->
+        <!--<artifactId>maven-dependency-plugin</artifactId>-->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<id>copy-dependencies</id>-->
+            <!--<phase>package</phase>-->
+            <!--<goals>-->
+              <!--<goal>copy-dependencies</goal>-->
+            <!--</goals>-->
+            <!--<configuration>-->
+              <!--<outputDirectory>${maven.application.dir}/webapps/${project.artifactId}/WEB-INF/lib</outputDirectory>-->
+              <!--<overWriteReleases>true</overWriteReleases>-->
+              <!--<overWriteSnapshots>true</overWriteSnapshots>-->
+              <!--<overWriteIfNewer>true</overWriteIfNewer>-->
+              <!--<includeScope>runtime</includeScope>-->
+            <!--</configuration>-->
+          <!--</execution>-->
+        <!--</executions>-->
+      <!--</plugin>-->
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package-webapp</id>
+            <phase>package</phase>
+            <configuration>
+              <tasks>
+                <fail message="The application root variable maven.application.dir needs to be set -Dmaven.application.dir=/path/to/application/root">
+                  <condition>
+                    <not>
+                      <isset property="maven.application.dir"/>
+                    </not>
+                  </condition>
+                </fail>
+                <property name="maven.build.dir" value="${basedir}/target/"/>
+
+                <copy todir="${maven.application.dir}/webapps/portlet-mvc-refactor-test/WEB-INF">
+                  <fileset dir="${basedir}/src/webapp/WEB-INF"/>
+                </copy>
+
+                <copy todir="${maven.application.dir}/webapps/portlet-mvc-refactor-test/WEB-INF/classes">
+                  <fileset dir="${basedir}/target/classes"/>
+                </copy>
+
+                <copy todir="${maven.application.dir}/webapps/portlet-mvc-refactor-test/WEB-INF/context">
+                  <fileset dir="${basedir}/src/webapp/context"/>
+                </copy>
+
+                <copy todir="${maven.application.dir}/webapps/portlet-mvc-refactor-test/WEB-INF/jsp">
+                  <fileset dir="${basedir}/src/webapp/jsp"/>
+                </copy>
+
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
 
   <dependencies>
 
-    <dependency>
-      <groupId>portlet-api</groupId>
-      <artifactId>portlet-api</artifactId>
-      <version>1.0</version>
-    </dependency>
+    <!--
+       Most if not all of these dependencies area already contained in
+       $APPLICATION_HOME/tomcat/application/lib so do not copy them over
+    -->
 
     <dependency>
       <groupId>javax.portlet</groupId>
       <artifactId>portlet-api</artifactId>
       <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.1.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>taglibs</groupId>
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
     </dependency>
+
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>1.1.1</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-asm</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc-portlet</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
       <version>${org.springframework.version}</version>
+      <scope>provided</scope>
     </dependency>
-
 
   </dependencies>
     
